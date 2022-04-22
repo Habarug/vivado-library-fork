@@ -1,26 +1,6 @@
 # Definitional proc to organize widgets for parameters.
 proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "Component_Name"
-  #Adding Page
-  set Page_0 [ipgui::add_page $IPINST -name "Page 0"]
-  ipgui::add_param $IPINST -name "kExtRelayConfigEn" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kExtCalibEn" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kExtSyncEn" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kExtCmdInterfaceEn" -parent ${Page_0}
-  set kCh1CouplingStatic [ipgui::add_param $IPINST -name "kCh1CouplingStatic" -parent ${Page_0}]
-  set_property tooltip {kCh1CouplingStatic} ${kCh1CouplingStatic}
-  ipgui::add_param $IPINST -name "kCh2HgAddCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh2HgMultCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh2LgAddCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh2LgMultCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh1HgAddCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh1HgMultCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh1LgAddCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh1LgMultCoefStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh2GainStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh1GainStatic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "kCh2CouplingStatic" -parent ${Page_0}
-
 
 }
 
