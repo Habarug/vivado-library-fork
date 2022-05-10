@@ -18,6 +18,8 @@ Please consult the IP Product Guide for more details.}
   set_property tooltip {Kextsyncen} ${kExtSyncEn}
 
   ipgui::add_param $IPINST -name "kZmodID" -widget comboBox
+  set BoardNetDelayPreset [ipgui::add_param $IPINST -name "BoardNetDelayPreset" -widget comboBox]
+  set_property tooltip {Applies board net delay timing constraints based on the selected board/port combination. Location constraints must still be manually included through an xdc file.} ${BoardNetDelayPreset}
   #Adding Page
   set Calibration [ipgui::add_page $IPINST -name "Calibration"]
   ipgui::add_param $IPINST -name "kExtCalibEn" -parent ${Calibration}
@@ -53,6 +55,15 @@ proc update_PARAM_VALUE.kADC_Width { PARAM_VALUE.kADC_Width PARAM_VALUE.kZmodID 
 
 proc validate_PARAM_VALUE.kADC_Width { PARAM_VALUE.kADC_Width } {
 	# Procedure called to validate kADC_Width
+	return true
+}
+
+proc update_PARAM_VALUE.BoardNetDelayPreset { PARAM_VALUE.BoardNetDelayPreset } {
+	# Procedure called to update BoardNetDelayPreset when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.BoardNetDelayPreset { PARAM_VALUE.BoardNetDelayPreset } {
+	# Procedure called to validate BoardNetDelayPreset
 	return true
 }
 

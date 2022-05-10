@@ -1,0 +1,118 @@
+set instname [current_inst]
+set f_xdc [add_ipfile -usedIn  [list synthesis implementation board ] -force ${instname}_timing.xdc]
+puts "Generating $f_xdc...."
+
+puts_ipfile $f_xdc {# Disable timing analysis for clock domain crossing dedicated modules}
+puts_ipfile $f_xdc {set_false_path -through [get_pins -filter {NAME =~ *SyncAsync*/oSyncStages_reg[*]/D} -hier]}
+puts_ipfile $f_xdc {set_false_path -through [get_pins -filter {NAME =~ *SyncAsync*/oSyncStages*/PRE || NAME =~ *SyncAsync*/oSyncStages*/CLR} -hier]}
+puts_ipfile $f_xdc {}
+puts_ipfile $f_xdc {set_false_path -through [get_pins -filter {NAME =~ *InstHandshake*/*/CLR} -hier]}
+puts_ipfile $f_xdc {set_false_path -from [get_cells -hier -filter {NAME =~ *InstHandshake*/iData_int_reg[*]}] -to [get_cells -hier -filter {NAME=~ *InstHandshake*/oData_reg[*]}]}
+puts_ipfile $f_xdc {}
+puts_ipfile $f_xdc {# Disable timing analysis on the InstADC_ClkODDR primitive reset input.}
+puts_ipfile $f_xdc {set_false_path -rise_from [get_pins -hier -filter {NAME =~ *InstADC_InClkReset*/SyncAsyncx/oSyncStages_reg[1]/C}] -fall_to [get_pins -hier -filter {NAME=~ *InstADC_ClkODDR*/R}]}
+puts_ipfile $f_xdc {}
+
+puts_ipfile $f_xdc {#Specify timing parameters for AD9648 in CMOS mode}
+set sampling_period [get_property PARAM_VALUE.kSamplingPeriod]
+puts "sampling_period: $sampling_period"
+if { $sampling_period < 10000 } {
+    puts_ipfile $f_xdc {set tskew_max 0.600;}
+    puts_ipfile $f_xdc {set tskew_min -0.720;}
+} else {
+    puts_ipfile $f_xdc {set tskew_max 1.000;}
+    puts_ipfile $f_xdc {set tskew_min -1.200;}
+}
+puts_ipfile $f_xdc {}
+
+puts_ipfile $f_xdc {#Reg 0x17 setting} 
+puts_ipfile $f_xdc {set OutputDelay  1.12;}
+puts_ipfile $f_xdc {}
+
+puts_ipfile $f_xdc "#[get_property PARAM_VALUE.BoardNetDelayPreset]"
+set board_preset [get_property PARAM_VALUE.BoardNetDelayPreset]
+if {$board_preset == 1} {
+    puts_ipfile $f_xdc {# Zmod Scope + Eclypse Z7 (Port A) Net Delays}
+    puts_ipfile $f_xdc {set net_delay_dcoclk 0.623}
+    puts_ipfile $f_xdc {}
+    puts_ipfile $f_xdc {set net_delay_d0 0.558}
+    puts_ipfile $f_xdc {set net_delay_d1 0.585}
+    puts_ipfile $f_xdc {set net_delay_d2 0.595}
+    puts_ipfile $f_xdc {set net_delay_d3 0.592}
+    puts_ipfile $f_xdc {set net_delay_d4 0.599}
+    puts_ipfile $f_xdc {set net_delay_d5 0.608}
+    puts_ipfile $f_xdc {set net_delay_d6 0.623}
+    puts_ipfile $f_xdc {set net_delay_d7 0.577}
+    puts_ipfile $f_xdc {set net_delay_d8 0.619}
+    puts_ipfile $f_xdc {set net_delay_d9 0.617}
+    puts_ipfile $f_xdc {set net_delay_d10 0.617}
+    puts_ipfile $f_xdc {set net_delay_d11 0.554}
+    puts_ipfile $f_xdc {set net_delay_d12 0.569}
+    puts_ipfile $f_xdc {set net_delay_d13 0.559}
+    puts_ipfile $f_xdc {}
+} elseif {$board_preset == 2} {
+    puts_ipfile $f_xdc {# Zmod Scope + Eclypse Z7 (Port B) Net Delays (FIXME!)}
+    puts_ipfile $f_xdc {set net_delay_dcoclk 0.000}
+    puts_ipfile $f_xdc {}
+    puts_ipfile $f_xdc {set net_delay_d0 0.000}
+    puts_ipfile $f_xdc {set net_delay_d1 0.000}
+    puts_ipfile $f_xdc {set net_delay_d2 0.000}
+    puts_ipfile $f_xdc {set net_delay_d3 0.000}
+    puts_ipfile $f_xdc {set net_delay_d4 0.000}
+    puts_ipfile $f_xdc {set net_delay_d5 0.000}
+    puts_ipfile $f_xdc {set net_delay_d6 0.000}
+    puts_ipfile $f_xdc {set net_delay_d7 0.000}
+    puts_ipfile $f_xdc {set net_delay_d8 0.000}
+    puts_ipfile $f_xdc {set net_delay_d9 0.000}
+    puts_ipfile $f_xdc {set net_delay_d10 0.000}
+    puts_ipfile $f_xdc {set net_delay_d11 0.000}
+    puts_ipfile $f_xdc {set net_delay_d12 0.000}
+    puts_ipfile $f_xdc {set net_delay_d13 0.000}
+    puts_ipfile $f_xdc {}
+} else {
+    puts_ipfile $f_xdc {# Default Zmod Scope Net Delays (FIXME!)}
+    puts_ipfile $f_xdc {set net_delay_dcoclk 0.000}
+    puts_ipfile $f_xdc {}
+    puts_ipfile $f_xdc {set net_delay_d0 0.000}
+    puts_ipfile $f_xdc {set net_delay_d1 0.000}
+    puts_ipfile $f_xdc {set net_delay_d2 0.000}
+    puts_ipfile $f_xdc {set net_delay_d3 0.000}
+    puts_ipfile $f_xdc {set net_delay_d4 0.000}
+    puts_ipfile $f_xdc {set net_delay_d5 0.000}
+    puts_ipfile $f_xdc {set net_delay_d6 0.000}
+    puts_ipfile $f_xdc {set net_delay_d7 0.000}
+    puts_ipfile $f_xdc {set net_delay_d8 0.000}
+    puts_ipfile $f_xdc {set net_delay_d9 0.000}
+    puts_ipfile $f_xdc {set net_delay_d10 0.000}
+    puts_ipfile $f_xdc {set net_delay_d11 0.000}
+    puts_ipfile $f_xdc {set net_delay_d12 0.000}
+    puts_ipfile $f_xdc {set net_delay_d13 0.000}
+    puts_ipfile $f_xdc {}
+}
+
+for {set index 0} {$index < 14} {incr index} {
+    set constr_line {set_input_delay -clock [get_clocks ZmodDcoClk] -clock_fall -min [expr $tskew_min + $net_delay_d<index> - $OutputDelay - $net_delay_dcoclk] [get_ports {dZmodADC_Data[<index>]} -prop_thru_buffers]}
+set_input_delay -clock [get_clocks ZmodDcoClk] -clock_fall -max [expr $tskew_max + $net_delay_d<index> - $OutputDelay - $net_delay_dcoclk] [get_ports {dZmodADC_Data[<index>]} -prop_thru_buffers]
+set_input_delay -clock [get_clocks ZmodDcoClk] -min -add_delay [expr $tskew_min + $net_delay_d<index> - $OutputDelay - $net_delay_dcoclk] [get_ports {dZmodADC_Data[<index>]} -prop_thru_buffers]
+set_input_delay -clock [get_clocks ZmodDcoClk] -max -add_delay [expr $tskew_max + $net_delay_d<index> - $OutputDelay - $net_delay_dcoclk] [get_ports {dZmodADC_Data[<index>]} -prop_thru_buffers]
+}
+	
+	set constr_block [string map "<index> $index" $constr_block]
+	puts_ipfile $f_xdc $constr_block
+}
+
+puts_ipfile $f_xdc {}
+puts_ipfile $f_xdc {#}
+puts_ipfile $f_xdc {create_generated_clock -name ZmodAdcClkIn -source [get_pins InstADC_ClkODDR/C] -add -master_clock [get_clocks -of [get_ports ADC_InClk]] -divide_by 1 [get_ports ZmodAdcClkIn_p]}
+puts_ipfile $f_xdc {}
+puts_ipfile $f_xdc {#DCO Clock period}
+puts_ipfile $f_xdc {set tDCO [get_property CLKIN1_PERIOD [get_cells InstDataPath/MMCME2_ADV_inst]];}
+puts_ipfile $f_xdc {set tDCO_half [expr $tDCO/2];}
+puts_ipfile $f_xdc {create_clock -period $tDCO -name ZmodDcoClk -waveform "0.000 $tDCO_half" [get_ports ZmodDcoClk -prop_thru_buffers]}
+puts_ipfile $f_xdc {}
+puts_ipfile $f_xdc {set_false_path -fall_from [get_pins -hier -filter {NAME =~ *InstADC_InClkReset*/SyncAsyncx/oSyncStages_reg[1]/C}] -to [get_pins -hier -filter {NAME=~ *InstADC_ClkODDR*/R}]}
+puts_ipfile $f_xdc {set_false_path -rise_from [get_pins -hier -filter {NAME =~ *InstADC_InClkReset*/SyncAsyncx/oSyncStages_reg[1]/C}] -fall_to [get_pins -hier -filter {NAME=~ *InstADC_ClkODDR*/R}]}
+puts_ipfile $f_xdc {set_false_path -setup -rise_from [get_pins -hier -filter {NAME =~ *InstADC_InClkReset*/SyncAsyncx/oSyncStages_reg[1]/C}] -fall_to [get_pins -hier -filter {NAME=~ *InstADC_ClkODDR*/R}]}
+
+
+close_ipfile $f_xdc
